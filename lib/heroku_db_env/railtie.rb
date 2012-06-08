@@ -4,6 +4,10 @@ module HerokuDbEnv
   class HerokuDbEnvRailtie < Rails::Railtie
     config.before_initialize do |app| 
       db_config = HerokuDbEnv.build_db_config(app.config.database_configuration)
+
+      # force active_record to use the db config instead of the db url
+      ENV['DATABASE_URL'] = nil
+
       app.config.class_eval do
         define_method(:database_configuration) { db_config }
       end
