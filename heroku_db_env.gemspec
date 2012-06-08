@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Alex Skryl"]
   s.email       = ["rut216@gmail.com"]
   s.homepage    = "http://github.com/skryl/heroku_db_env"
-  s.summary     = %q{Overwrite Heroku's auto generated database.yml configuration}
-  s.description = %q{Use a custom database.yml in a Heroku application}
+  s.summary     = %q{Overwrite Heroku's auto generated database configuration}
+  s.description = %q{Use a custom database configuration in a Heroku application}
 
   s.rubyforge_project = "heroku_db_env"
 
