@@ -1,21 +1,21 @@
 module HerokuDbEnv
-  class HerokuDbEnvRailtie < Rails::Railtie
+  DB_URL_MATCHER = /(.*)_DATABASE_URL/
 
-    initializer "heroku_db_env_railtie.initialize_database" do |app|
-      ActiveSupport.on_load(:active_record) do
-        ActiveRecord::Base.configurations = \
-          HerokuDbEnv.generate_heroku_db_config(app.config.database_configuration)
-        ActiveRecord::Base.establish_connection
+  class HerokuDbEnvRailtie < Rails::Railtie
+    config.before_initialize do |app| 
+      db_config = HerokuDbEnv.build_db_config(app.config.database_configuration)
+      app.config.class_eval do
+        define_method(:database_configuration) { db_config }
       end
     end
-
   end
+
 
 class << self
 
-  def generate_heroku_db_config(default_config = {})
+  def build_db_config(default_config = {})
     heroku_config = load_heroku_db_config(Rails.root.join('config/heroku_database.yml'))
-    merge_db_env( default_config.with_indifferent_access.deep_merge(heroku_config) )
+    overlay_configs(default_config, heroku_config, env_config)
   end
 
 private
@@ -26,22 +26,22 @@ private
     YAML::load(ERB.new(IO.read(db_yml)).result)
   end
 
-  def merge_db_env(db_config)
-    return {} unless db_config.is_a? Hash
-    db_config.each do |env, config| 
-      db_config[env] = \
-        if env_db_url(env)
-          resolver = ActiveRecord::Base::ConnectionSpecification::Resolver.new(env_db_url(env), {})
-          config.merge(resolver.spec.config)
-        else config
-        end
+  def env_config
+    db_env.inject({}) do |a, (env, config)| 
+      resolver = ActiveRecord::Base::ConnectionSpecification::Resolver.new(config, {})
+      a[env.match(DB_URL_MATCHER)[1].downcase] = resolver.spec.config; a
     end
   end
 
-  def env_db_url(env)
-    ENV["#{env.upcase}_DATABASE_URL"]
+  def db_env
+    ENV.select { |k,v| DB_URL_MATCHER === k }
+  end
+
+  def overlay_configs(*configs)
+    configs.inject({}) do |a, c|
+      a.deep_merge(c.with_indifferent_access)
+    end
   end
 
 end
-
 end
