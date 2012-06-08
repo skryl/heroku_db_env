@@ -69,4 +69,4 @@ The final database configuration should look like
 
 Run a db rake task against any configured database to test the setup
 
-    rake db:migrate RAILS_ENV=reporting
+    heroku run rake db:migrate RAILS_ENV=reporting
