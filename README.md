@@ -24,12 +24,12 @@ Heroku's auto-generated database.yml is actually an ERB script which will
 transform the DATABASE_URL environment variable to the following connection
 config when the file is read
 
-  production:
-    adapter: postgres
-    database: db_prod
-    username: user
-    password: pass
-    host: hostname
+    production:
+      adapter: postgres
+      database: db_prod
+      username: user
+      password: pass
+      host: hostname
 
 Now lets say, for whatever reason, you are unhappy with the auto generated
 database configuration. You can overwrite it by providing a heroku_database.yml
@@ -51,21 +51,21 @@ And your REPORTING_DATABASE_URL is set to
 
 The final database configuration should look like
 
-  production:
-    adapter: postgres
-    database: db_prod
-    username: user
-    password: pass
-    host: hostname
-    pool: 10
-  reporting:
-    adapter: postgres
-    database: db_reporting
-    username: user
-    password: pass
-    host: reporting.hostname
-    pool: 5
-    schema_search_path: reporting_schema
+    production:
+      adapter: postgres
+      database: db_prod
+      username: user
+      password: pass
+      host: hostname
+      pool: 10
+    reporting:
+      adapter: postgres
+      database: db_reporting
+      username: user
+      password: pass
+      host: reporting.hostname
+      pool: 5
+      schema_search_path: reporting_schema
 
 Run a db rake task against any configured database to test the setup
 
