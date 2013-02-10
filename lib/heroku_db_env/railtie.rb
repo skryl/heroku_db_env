@@ -2,7 +2,7 @@ module HerokuDbEnv
   DB_URL_MATCHER = /(.*)_DATABASE_URL/
 
   class HerokuDbEnvRailtie < Rails::Railtie
-    config.before_initialize do |app| 
+    initializer :initialize_heroku_db_env, {:group => :default, :before => "active_record.initialize_database"} do |app|
       db_config = HerokuDbEnv.build_db_config(app.config.database_configuration)
 
       # force active_record to use the db config instead of the db url
